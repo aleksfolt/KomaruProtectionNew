@@ -1,0 +1,5 @@
+aiofiles
+aiogram
+python-dotenv
+sqlalchemy
+cachetools
