@@ -87,14 +87,13 @@ async def check_user(event: ChatMemberUpdated):
         session.close()
 
     raiders, kchat_raiders = await load_raiders()
-    print(raiders, kchat_raiders)
 
     if db_choice == 'lite':
         raider_list = raiders
     elif db_choice == 'strong':
         raider_list = kchat_raiders
 
-    if any(raider['user_id'] == str(new_member.id) for raider in raider_list.values()):
+    if any(raider['user_id'] == str(new_member.id) for raider in raider_list):
         member_status = await event.bot.get_chat_member(chat_id, new_member.id)
         if member_status.status == "member":
             await asyncio.sleep(2)
