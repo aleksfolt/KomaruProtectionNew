@@ -39,10 +39,7 @@ def add_user_to_db(user_ids, db_type):
         with open(file_name, 'r') as file:
             data = json.load(file)
     except FileNotFoundError:
-        data = {}
-
-    if isinstance(data, list):
-        data = {str(i): item for i, item in enumerate(data)}
+        data = []
 
     if not isinstance(user_ids, list):
         user_ids = [user_ids]
@@ -51,20 +48,21 @@ def add_user_to_db(user_ids, db_type):
     added_users = []
 
     for user_id in user_ids:
-        user_id_str = str(user_id)
-        if user_id_str in data:
-            already_in_db.append(user_id_str)
+        if any(isinstance(user, dict) and user.get("user_id") == user_id for user in data):
+            already_in_db.append(user_id)
         else:
-            data[user_id_str] = {
+            user_data = {
                 "username": "No Username",
                 "user_id": user_id
             }
-            added_users.append(user_id_str)
+            data.append(user_data)
+            added_users.append(user_id)
 
     with open(file_name, 'w') as file:
         json.dump(data, file, indent=4)
 
     return added_users, already_in_db
+
 
 def remove_user_from_db(user_ids, db_type):
     if db_type == 'lite':
@@ -89,12 +87,12 @@ def remove_user_from_db(user_ids, db_type):
     removed_users = []
 
     for user_id in user_ids:
-        user_id_str = str(user_id)
-        if user_id_str in data:
-            del data[user_id_str]
-            removed_users.append(user_id_str)
+        user_to_remove = next((user for user in data if isinstance(user, dict) and user.get('user_id') == user_id), None)
+        if user_to_remove:
+            data.remove(user_to_remove)
+            removed_users.append(user_id)
         else:
-            not_in_db.append(user_id_str)
+            not_in_db.append(user_id)
 
     with open(file_name, 'w') as file:
         json.dump(data, file, indent=4)
