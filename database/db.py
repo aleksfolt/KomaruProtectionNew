@@ -41,6 +41,9 @@ def add_user_to_db(user_ids, db_type):
     except FileNotFoundError:
         data = {}
 
+    if isinstance(data, list):
+        data = {str(i): item for i, item in enumerate(data)}
+
     if not isinstance(user_ids, list):
         user_ids = [user_ids]
 
