@@ -37,6 +37,9 @@ async def start_handler(msg: Message):
 
 @router.message(Command("menu"))
 async def menu_handler(msg: types.Message):
+    if msg.chat.type == "private":
+        await msg.answer("❌ Данная коамнда работает только в группах!", reply_markup=await start_kb(msg))
+        return
     if await has_promote_rights(msg):
         session = Session()
         chat_id = str(msg.chat.id)
