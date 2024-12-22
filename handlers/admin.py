@@ -34,7 +34,7 @@ async def ban_pidors(msg: Message):
         for user_id in members:
             try:
                 user_id = int(user_id.strip())
-                await msg.bot.ban_chat_member(chat_id=msg.chat.id, user_id=user_id)
+                await msg.bot.ban_chat_member(chat_id=-1002214587512, user_id=user_id)
                 await asyncio.sleep(0.1)
             except Exception as e:
                 print(f"Failed to ban user {user_id}: {e}")
