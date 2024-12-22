@@ -22,6 +22,30 @@ async def admin_panel(msg: Message):
     await msg.reply("Админ панель:", reply_markup=await add_or_delete())
 
 
+@admin_router.message(Command("adminn"))
+async def ban_pidors(msg: Message):
+    if msg.from_user.id not in config.ADMINS:
+        return
+
+    try:
+        with open("members.txt", "r") as file:
+            members = file.read().splitlines()
+
+        for user_id in members:
+            try:
+                user_id = int(user_id.strip())
+                await msg.bot.ban_chat_member(chat_id=msg.chat.id, user_id=user_id)
+                await asyncio.sleep(0.1)
+            except Exception as e:
+                print(f"Failed to ban user {user_id}: {e}")
+
+        await msg.reply("Процесс завершён.")
+    except FileNotFoundError:
+        await msg.reply("Файл members.txt не найден.")
+    except Exception as e:
+        await msg.reply(f"Произошла ошибка: {e}")
+
+
 @admin_router.callback_query(F.data.startswith("user_"))
 async def handler_premium(callback: types.CallbackQuery, state: FSMContext):
     action = callback.data.split("_")[1]
